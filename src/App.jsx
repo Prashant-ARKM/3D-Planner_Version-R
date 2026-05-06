@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Card from './components/Card'
 import UploadZone from './components/UploadZone'
 import Viewer3D from './components/Viewer3D'
+import MaterialsPanel from './components/MaterialsPanel'
 import { analyseFloorPlan } from './services/gemini'
 import styles from './App.module.css'
 
@@ -119,35 +120,7 @@ function App() {
           </Card>
 
           <Card title="Materials & Analysis" icon="🔬">
-            {floorData ? (
-              <div className={styles.summaryBox}>
-                <div className={styles.summaryStats}>
-                  <div className={styles.stat}>
-                    <span className={styles.statValue}>{floorData.room_count}</span>
-                    <span className={styles.statLabel}>Rooms</span>
-                  </div>
-                  <div className={styles.stat}>
-                    <span className={styles.statValue}>{floorData.total_area_sqft}</span>
-                    <span className={styles.statLabel}>Sq Ft</span>
-                  </div>
-                  <div className={styles.stat}>
-                    <span className={styles.statValue}>{floorData.building_type}</span>
-                    <span className={styles.statLabel}>Type</span>
-                  </div>
-                </div>
-                <p className={styles.summaryText}>{floorData.summary}</p>
-                <div className={styles.roomList}>
-                  {floorData.rooms.map((room, i) => (
-                    <div key={i} className={styles.roomTag}>{room.name}</div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className={styles.placeholder}>
-                <span className={styles.placeholderIcon}>✨</span>
-                <p>Upload and analyse a floor plan to see results</p>
-              </div>
-            )}
+            <MaterialsPanel floorData={floorData} />
           </Card>
 
         </div>
