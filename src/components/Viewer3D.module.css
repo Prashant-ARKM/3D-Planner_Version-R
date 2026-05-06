@@ -1,0 +1,52 @@
+/* Viewer3D.module.css */
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #0a1628;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  background: rgba(0,0,0,0.4);
+  padding: 4px 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.emptyIcon {
+  font-size: 36px;
+  opacity: 0.4;
+}

@@ -1,19 +1,8 @@
-// App.jsx — Phase 4
-// ─────────────────────────────────────────────────────────────
-// CONCEPT: Loading and error states
-// Real apps always have three states for async operations:
-//   1. idle    — nothing happening yet
-//   2. loading — waiting for the API response
-//   3. error   — something went wrong
-//   4. success — data arrived, show it
-//
-// We represent this with a `status` state variable.
-// ─────────────────────────────────────────────────────────────
-
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Card from './components/Card'
 import UploadZone from './components/UploadZone'
+import Viewer3D from './components/Viewer3D'
 import { analyseFloorPlan } from './services/gemini'
 import styles from './App.module.css'
 
@@ -23,8 +12,8 @@ function App() {
   const [isDark, setIsDark]             = useState(true)
   const [currentStage, setCurrentStage] = useState(0)
   const [selectedFile, setSelectedFile] = useState(null)
-  const [floorData, setFloorData]       = useState(null)  // Gemini's response
-  const [status, setStatus]             = useState('idle') // idle | loading | error
+  const [floorData, setFloorData]       = useState(null)
+  const [status, setStatus]             = useState('idle')
   const [errorMsg, setErrorMsg]         = useState(null)
 
   useEffect(() => {
@@ -46,24 +35,21 @@ function App() {
     setCurrentStage(file ? 1 : 0)
   }
 
-  // async function — because analyseFloorPlan is async
   async function handleProcess() {
     if (!selectedFile || currentStage !== 1) return
-
     setStatus('loading')
     setErrorMsg(null)
-    setCurrentStage(2) // move to Analyse stage
+    setCurrentStage(2)
 
     try {
-      // await pauses here until Gemini responds
       const data = await analyseFloorPlan(selectedFile)
       setFloorData(data)
       setStatus('success')
-      setCurrentStage(3) // move to Render stage
+      setCurrentStage(3)
     } catch (err) {
       setStatus('error')
       setErrorMsg(err.message)
-      setCurrentStage(1) // go back to Upload stage
+      setCurrentStage(1)
     }
   }
 
@@ -73,7 +59,6 @@ function App() {
 
       <main className={styles.main}>
 
-        {/* Pipeline tracker */}
         <div className={styles.pipeline}>
           {STAGES.map((stage, index) => (
             <div key={stage} className={styles.stage}>
@@ -105,22 +90,14 @@ function App() {
           {/* Floor Plan card */}
           <Card title="Floor Plan" icon="📐">
             <UploadZone onFileReady={handleFileReady} />
-
-            {/* Error message */}
             {status === 'error' && (
-              <div className={styles.errorBox}>
-                ⚠️ {errorMsg}
-              </div>
+              <div className={styles.errorBox}>⚠️ {errorMsg}</div>
             )}
-
-            {/* Process button */}
             {selectedFile && currentStage === 1 && (
               <button className={styles.processBtn} onClick={handleProcess}>
                 Analyse with Gemini →
               </button>
             )}
-
-            {/* Loading state */}
             {status === 'loading' && (
               <div className={styles.loadingBox}>
                 <div className={styles.spinner} />
@@ -129,15 +106,12 @@ function App() {
             )}
           </Card>
 
-          {/* 3D Viewer — placeholder for Phase 5 */}
+          {/* 3D Viewer — now live */}
           <Card title="3D Viewer" icon="🏗️" accent>
-            <div className={styles.placeholder}>
-              <span className={styles.placeholderIcon}>🧊</span>
-              <p>Three.js viewer coming in Phase 5</p>
-            </div>
+            <Viewer3D floorData={floorData} isDark={isDark} />
           </Card>
 
-          {/* Materials — shows Gemini summary if data exists */}
+          {/* Materials panel */}
           <Card title="Materials & Analysis" icon="🔬">
             {floorData ? (
               <div className={styles.summaryBox}>
@@ -158,9 +132,7 @@ function App() {
                 <p className={styles.summaryText}>{floorData.summary}</p>
                 <div className={styles.roomList}>
                   {floorData.rooms.map((room, i) => (
-                    <div key={i} className={styles.roomTag}>
-                      {room.name}
-                    </div>
+                    <div key={i} className={styles.roomTag}>{room.name}</div>
                   ))}
                 </div>
               </div>
