@@ -1,0 +1,148 @@
+/* UploadZone.module.css */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Hidden file input ── */
+.hiddenInput {
+  display: none;
+}
+
+/* ── Drop zone ── */
+.zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  background: var(--surface2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.zone:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Active drag-over state */
+.zone.dragging {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  transform: scale(1.01);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.zoneIcon {
+  font-size: 40px;
+  margin-bottom: 4px;
+  transition: transform 0.2s;
+}
+
+.zone:hover .zoneIcon,
+.zone.dragging .zoneIcon {
+  transform: scale(1.1);
+}
+
+.zoneTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.zoneHint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.browse {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.zoneFormats {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Error message ── */
+.error {
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--error) 30%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--error);
+  font-size: 13px;
+}
+
+/* ── Preview ── */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.previewImg {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.previewMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; /* allows text truncation */
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.fileSize {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.clearBtn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: var(--font-body);
+}
+
+.clearBtn:hover {
+  border-color: var(--error);
+  color: var(--error);
+}

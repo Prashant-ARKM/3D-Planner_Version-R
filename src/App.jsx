@@ -1,82 +1,98 @@
 // App.jsx
 // ─────────────────────────────────────────────────────────────
-// CONCEPT: useState — React's memory
+// CONCEPT: Lifting state up
 //
-// React components are just functions. But functions normally
-// forget everything when they finish running. useState gives
-// a component "memory" — a value that persists between renders
-// and causes the UI to update when it changes.
+// The pipeline stage (which step we're on) is owned here in
+// App — the parent. Both the pipeline tracker UI and the
+// UploadZone need to know about / affect it. So the state
+// lives at the level that controls both.
 //
-// const [isDark, setIsDark] = useState(true)
-//   isDark    → the current value (starts as true)
-//   setIsDark → the function to update it
+// When UploadZone calls onFileReady(file):
+//   → App's handleFileReady runs
+//   → App updates its own state
+//   → App re-renders, passing new props down to children
 //
-// Rule: NEVER do `isDark = false` directly.
-//       ALWAYS use `setIsDark(false)`.
-//       Direct mutation doesn't trigger a re-render.
-//
-// CONCEPT: data-theme attribute
-// Instead of swapping CSS classes, we set an attribute on
-// the <html> element. Our global.css watches for
-// [data-theme="light"] and swaps all the CSS variables.
-// One attribute change → entire app recolors. Clean.
+// Data flows DOWN (via props).
+// Events flow UP (via callback functions).
+// This is the core data flow pattern in React.
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Card from './components/Card'
+import UploadZone from './components/UploadZone'
 import styles from './App.module.css'
 
-function App() {
-  // useState gives us: current value + a setter function
-  const [isDark, setIsDark] = useState(true)
+const STAGES = ['Upload', 'Analyse', 'Render', 'Done']
 
-  // useEffect runs after the component renders.
-  // Here we use it to sync our isDark state with the
-  // actual HTML element's attribute — that's what triggers
-  // the CSS variable swap in global.css.
+function App() {
+  const [isDark, setIsDark]             = useState(true)
+  const [currentStage, setCurrentStage] = useState(0)
+  const [selectedFile, setSelectedFile] = useState(null)
+
   useEffect(() => {
     document.documentElement.setAttribute(
       'data-theme',
       isDark ? 'dark' : 'light'
     )
-  }, [isDark]) // the [isDark] means: re-run this when isDark changes
+  }, [isDark])
 
-  // This function flips the theme.
-  // We pass it down to Header as a prop.
   function handleToggle() {
-    setIsDark(prev => !prev) // !prev means "opposite of current value"
+    setIsDark(prev => !prev)
+  }
+
+  function handleFileReady(file) {
+    setSelectedFile(file)
+    setCurrentStage(file ? 1 : 0)
+  }
+
+  function handleProcess() {
+    if (currentStage === 1) {
+      setCurrentStage(2)
+    }
   }
 
   return (
     <div className={styles.app}>
-
-      {/* Header receives isDark and handleToggle as props */}
       <Header isDark={isDark} onToggle={handleToggle} />
 
       <main className={styles.main}>
 
-        {/* Pipeline stage tracker — placeholder for now */}
         <div className={styles.pipeline}>
-          {['Upload', 'Analyse', 'Render', 'Done'].map((stage, index) => (
+          {STAGES.map((stage, index) => (
             <div key={stage} className={styles.stage}>
-              <div className={`${styles.stageNumber} ${index === 0 ? styles.active : ''}`}>
-                {index + 1}
+              <div className={`
+                ${styles.stageNumber}
+                ${index === currentStage ? styles.active : ''}
+                ${index < currentStage ? styles.done : ''}
+              `}>
+                {index < currentStage ? '✓' : index + 1}
               </div>
-              <span className={styles.stageLabel}>{stage}</span>
-              {index < 3 && <div className={styles.connector} />}
+              <span className={`
+                ${styles.stageLabel}
+                ${index === currentStage ? styles.stageLabelActive : ''}
+              `}>
+                {stage}
+              </span>
+              {index < STAGES.length - 1 && (
+                <div className={`
+                  ${styles.connector}
+                  ${index < currentStage ? styles.connectorDone : ''}
+                `} />
+              )}
             </div>
           ))}
         </div>
 
-        {/* Main content grid */}
         <div className={styles.grid}>
 
           <Card title="Floor Plan" icon="📐">
-            <div className={styles.placeholder}>
-              <span className={styles.placeholderIcon}>⬆️</span>
-              <p>Upload zone coming in Phase 3</p>
-            </div>
+            <UploadZone onFileReady={handleFileReady} />
+            {selectedFile && currentStage === 1 && (
+              <button className={styles.processBtn} onClick={handleProcess}>
+                Analyse with Gemini →
+              </button>
+            )}
           </Card>
 
           <Card title="3D Viewer" icon="🏗️" accent>

@@ -129,3 +129,55 @@
     grid-column: 1;
   }
 }
+
+/* ── Stage tracker additions ── */
+.stageNumber.done {
+  border-color: var(--success);
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+}
+
+.stageLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.stageLabelActive {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.connectorDone {
+  background: var(--success) !important;
+  opacity: 0.4;
+}
+
+/* ── Process button ── */
+.processBtn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.processBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.processBtn:active {
+  transform: translateY(0);
+}
