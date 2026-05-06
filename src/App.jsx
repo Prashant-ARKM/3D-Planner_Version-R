@@ -14,6 +14,7 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null)
   const [floorData, setFloorData]       = useState(null)
   const [status, setStatus]             = useState('idle')
+  const [statusMsg, setStatusMsg]       = useState('')
   const [errorMsg, setErrorMsg]         = useState(null)
 
   useEffect(() => {
@@ -31,6 +32,7 @@ function App() {
     setSelectedFile(file)
     setFloorData(null)
     setStatus('idle')
+    setStatusMsg('')
     setErrorMsg(null)
     setCurrentStage(file ? 1 : 0)
   }
@@ -42,13 +44,17 @@ function App() {
     setCurrentStage(2)
 
     try {
-      const data = await analyseFloorPlan(selectedFile)
+      const data = await analyseFloorPlan(selectedFile, (msg) => {
+        setStatusMsg(msg)
+      })
       setFloorData(data)
       setStatus('success')
+      setStatusMsg('')
       setCurrentStage(3)
     } catch (err) {
       setStatus('error')
       setErrorMsg(err.message)
+      setStatusMsg('')
       setCurrentStage(1)
     }
   }
@@ -87,31 +93,31 @@ function App() {
 
         <div className={styles.grid}>
 
-          {/* Floor Plan card */}
           <Card title="Floor Plan" icon="📐">
             <UploadZone onFileReady={handleFileReady} />
+
             {status === 'error' && (
               <div className={styles.errorBox}>⚠️ {errorMsg}</div>
             )}
+
             {selectedFile && currentStage === 1 && (
               <button className={styles.processBtn} onClick={handleProcess}>
                 Analyse with Gemini →
               </button>
             )}
+
             {status === 'loading' && (
               <div className={styles.loadingBox}>
                 <div className={styles.spinner} />
-                <span>Gemini is reading your floor plan...</span>
+                <span>{statusMsg || 'Analysing...'}</span>
               </div>
             )}
           </Card>
 
-          {/* 3D Viewer — now live */}
           <Card title="3D Viewer" icon="🏗️" accent>
             <Viewer3D floorData={floorData} isDark={isDark} />
           </Card>
 
-          {/* Materials panel */}
           <Card title="Materials & Analysis" icon="🔬">
             {floorData ? (
               <div className={styles.summaryBox}>
