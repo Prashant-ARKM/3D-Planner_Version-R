@@ -1,0 +1,51 @@
+/* Card.module.css */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  box-shadow: var(--shadow);
+}
+
+/* accent variant — highlighted card */
+.accented {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent),
+              var(--shadow);
+}
+
+/* ── Card header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ── Card body ── */
+.body {
+  padding: 24px;
+}

@@ -1,0 +1,146 @@
+/* Header.module.css */
+/* ─────────────────────────────────────────────────────────────
+   CONCEPT: CSS Modules
+   Instead of one big global CSS file where class names can
+   clash, CSS Modules scope styles to the component they belong
+   to. The class name `.header` here won't conflict with any
+   other `.header` in the project — Vite makes them unique.
+
+   Usage in JSX: className={styles.header}
+   ───────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* glass effect */
+  background: rgba(15, 22, 35, 0.85);
+}
+
+[data-theme="light"] .header {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Logo ── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoMark {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.logoMark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-dim);
+}
+
+.logoP {
+  font-size: 16px;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Right side ── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Status badge */
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  /* pulse animation */
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Theme toggle button */
+.toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.toggle:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  transform: scale(1.05);
+}
+
+.toggle:active {
+  transform: scale(0.95);
+}

@@ -1,0 +1,131 @@
+/* App.module.css */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Main content area ── */
+.main {
+  flex: 1;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Pipeline stage tracker ── */
+.pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 40px;
+  padding: 20px 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stageNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  font-family: var(--font-display);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Active stage gets accent color */
+.stageNumber.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.stageLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+/* Line connecting stages */
+.connector {
+  width: 60px;
+  height: 1px;
+  background: var(--border);
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* ── Content grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}
+
+/* Materials card spans full width */
+.grid > :last-child {
+  grid-column: 1 / -1;
+}
+
+/* ── Placeholder content inside empty cards ── */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 20px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.placeholderIcon {
+  font-size: 32px;
+  opacity: 0.5;
+}
+
+/* ── Responsive — stack on mobile ── */
+@media (max-width: 768px) {
+  .main {
+    padding: 16px;
+  }
+
+  .pipeline {
+    gap: 8px;
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+
+  .connector {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid > :last-child {
+    grid-column: 1;
+  }
+}
