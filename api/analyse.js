@@ -1,13 +1,7 @@
 // api/analyse.js
-// ─────────────────────────────────────────────────────────────
-// Vercel Serverless Function
-// This runs on Vercel's servers — NOT in the browser.
-// The API key is stored as a Vercel environment variable,
-// never exposed to the client.
-// ─────────────────────────────────────────────────────────────
+// Vercel Serverless Function — API key never exposed to browser
 
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -21,21 +15,31 @@ export default async function handler(req, res) {
 
   try {
     let result
-
-    if (action === 'understand') {
-      result = await callGeminiUnderstand(apiKey, payload)
-    } else if (action === 'measure') {
-      result = await callGeminiMeasure(apiKey, payload)
-    } else if (action === 'materials') {
-      result = await callGeminiMaterials(apiKey, payload)
-    } else {
-      return res.status(400).json({ error: 'Unknown action' })
-    }
-
+    if (action === 'understand')     result = await callGeminiUnderstand(apiKey, payload)
+    else if (action === 'measure')   result = await callGeminiMeasure(apiKey, payload)
+    else if (action === 'materials') result = await callGeminiMaterials(apiKey, payload)
+    else return res.status(400).json({ error: 'Unknown action' })
     res.status(200).json({ result })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
+}
+
+// ── Safe JSON parser ─────────────────────────────────────────
+function safeParseJSON(text) {
+  const cleaned = text
+    .replace(/```json|```/g, '')           // remove markdown backticks
+    .replace(/[\u0080-\uFFFF]/g, (char) => {
+      if (char === '\u20b9' || char === '\u00a3' || char === '\u20ac') return 'INR'
+      return ''                             // remove all other non-ASCII
+    })
+    .replace(/\r?\n|\r/g, ' ')             // flatten newlines
+    .replace(/\t/g, ' ')                   // flatten tabs
+    .trim()
+
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('No JSON found in Gemini response')
+  return JSON.parse(jsonMatch[0])
 }
 
 // ── Call 1: Understand layout ────────────────────────────────
@@ -105,6 +109,7 @@ Rules:
 - All coordinates must be real numbers read from the grid
 - Every room needs at least one door
 - Keep all numeric values to max 1 decimal place
+- Use only ASCII characters in all string values
 - Return ONLY the JSON with no extra whitespace`
 
   const response = await fetch(
@@ -130,11 +135,7 @@ Rules:
   const data = await response.json()
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text
   if (!text) throw new Error('No response from Gemini Call 2')
-
-  const cleaned = text.replace(/```json|```/g, '').trim()
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in Gemini Call 2 response')
-  return JSON.parse(jsonMatch[0])
+  return safeParseJSON(text)
 }
 
 // ── Call 3: Material recommendations ────────────────────────
@@ -154,7 +155,7 @@ For each building element, recommend optimal material for Indian market conditio
 Building elements: Foundation, Exterior Walls, Interior Walls, Flooring, Roof, Doors, Windows, Plumbing, Electrical
 
 CRITICAL: Return ONLY valid JSON. No markdown, no backticks, no extra text before or after.
-Use only ASCII characters — do NOT use the rupee symbol, write INR or Rs instead.
+Use ONLY ASCII characters — do NOT use rupee symbol, write INR instead.
 
 Format:
 {"materials":[{"element":"Foundation","material":"name","cost":2,"durability":3,"reasoning":"reasoning","alternatives":"alternatives","approx_cost":"INR X-Y per sqft"}]}
@@ -186,9 +187,5 @@ cost and durability are integers 1-3 only. Return ONLY the JSON.`
   const data = await response.json()
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text
   if (!text) throw new Error('No response from Gemini Call 3')
-
-  const cleaned = text.replace(/```json|```/g, '').trim()
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in materials response')
-  return JSON.parse(jsonMatch[0])
+  return safeParseJSON(text)
 }
