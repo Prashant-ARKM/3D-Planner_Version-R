@@ -28,13 +28,10 @@ export default async function handler(req, res) {
 // ── Safe JSON parser ─────────────────────────────────────────
 function safeParseJSON(text) {
   const cleaned = text
-    .replace(/```json|```/g, '')           // remove markdown backticks
-    .replace(/[\u0080-\uFFFF]/g, (char) => {
-      if (char === '\u20b9' || char === '\u00a3' || char === '\u20ac') return 'INR'
-      return ''                             // remove all other non-ASCII
-    })
-    .replace(/\r?\n|\r/g, ' ')             // flatten newlines
-    .replace(/\t/g, ' ')                   // flatten tabs
+    .replace(/```json|```/g, '')
+    .replace(/[\u0080-\uFFFF]/g, '')  // remove ALL non-ASCII
+    .replace(/\r?\n|\r/g, ' ')
+    .replace(/\t/g, ' ')
     .trim()
 
   const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
