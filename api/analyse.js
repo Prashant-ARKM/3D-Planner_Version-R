@@ -155,6 +155,8 @@ Analyse this building and recommend optimal construction materials:
 - Total area: ${floorData.total_area_sqft} sqft
 - Rooms: ${roomList}
 - Shape: ${floorData.summary}
+- Return minified JSON only — no spaces, no indentation, no newlines
+- Example: {"rooms":[{"name":"A","x":0,"y":0}]} not formatted JSON
 
 For each building element, recommend optimal material for Indian market conditions. Analyse cost vs durability tradeoffs. All prices in Indian Rupees reflecting 2024-25 market rates.
 
