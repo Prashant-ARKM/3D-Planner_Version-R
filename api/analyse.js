@@ -29,14 +29,23 @@ export default async function handler(req, res) {
 function safeParseJSON(text) {
   const cleaned = text
     .replace(/```json|```/g, '')
-    .replace(/[\u0080-\uFFFF]/g, '')  // remove ALL non-ASCII
+    .replace(/[\u0080-\uFFFF]/g, '')
     .replace(/\r?\n|\r/g, ' ')
     .replace(/\t/g, ' ')
     .trim()
 
   const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in Gemini response')
-  return JSON.parse(jsonMatch[0])
+  
+  const jsonStr = jsonMatch[0]
+  try {
+    return JSON.parse(jsonStr)
+  } catch(e) {
+    // Log context around the error position
+    const pos = parseInt(e.message.match(/position (\d+)/)?.[1] || 0)
+    const context = jsonStr.substring(Math.max(0, pos-30), pos+30)
+    throw new Error(`JSON parse failed at pos ${pos}. Context: "${context}"`)
+  }
 }
 
 // ── Call 1: Understand layout ────────────────────────────────
