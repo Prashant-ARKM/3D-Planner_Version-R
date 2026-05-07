@@ -128,7 +128,7 @@ Rules:
           { text: prompt },
           { inline_data: { mime_type: 'image/png', data: gridBase64 } }
         ]}],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 8000 }
+        generationConfig: { temperature: 0.1, maxOutputTokens: 12000 }
       })
     }
   )
